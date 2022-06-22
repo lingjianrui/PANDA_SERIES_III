@@ -1252,7 +1252,7 @@ contract PANDA_SERIES_III is ERC721, Ownable, ReentrancyGuard {
     //MINT
     function mint(bytes32[] memory proof, uint256 _mintAmount) external payable  nonReentrant {
         require(!paused, "The contract is paused!");
-        require(msg.value > cost * _mintAmount - 1, "Insufficient funds");
+        require(msg.value >= cost * _mintAmount, "Insufficient funds");
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
         require(MerkleProof.verify(proof, merkleRoot, leaf), "Merkle Proof Verification failed");
         require(ClaimedWhitelist[msg.sender] - _mintAmount > 0, "Exceeds Whitelist Allowance");
@@ -1301,32 +1301,36 @@ contract PANDA_SERIES_III is ERC721, Ownable, ReentrancyGuard {
     function getClaimWhitelist(address _addr) external view returns (uint256) { 
         return ClaimedWhitelist[_addr];
     }
-
-    //ONLY OWNER SET
-    function setMaxSupply(uint256 _MS) external onlyOwner { 
-        require(_MS > maxSupply, "New MS below previous MS");
-        maxSupply = _MS;
-    }
-
+    
+    event SetClaimWhitelistEvent(address _addr, uint256 _amount);
     function setClaimWhitelist(address _addr, uint256 _amount) external onlyOwner { 
         ClaimedWhitelist[_addr] = ClaimedWhitelist[_addr] + _amount;
+        emit SetClaimWhitelistEvent(_addr,_amount);
     }
 
+    event SetCostEvent(uint256 _newCost);
     function setCost(uint256 _newCost) external onlyOwner { 
         require(_newCost > 0);
         cost = _newCost;
+        emit SetCostEvent(_newCost);
     }
-
-    function setMerkleroot(bytes32 _merkleroot) external onlyOwner { 
+    
+    event SetUriMerklerootEvent(bytes32 _merkleroot);
+    function setMerkleroot(bytes32 _merkleroot);external onlyOwner { 
         merkleRoot = _merkleroot;
+        emit SetUriMerklerootEvent(_merkleroot);
     }
 
+    event SetUriPrifix(string memory _uriPrefix);
     function setUriPrefix(string memory _uriPrefix) external onlyOwner { 
         uriPrefix = _uriPrefix;
+        emit SetUriPrifix(_uriPrefix);
     }
-
+    
+    event SetPausedEvent(bool _state);
     function setPaused(bool _state) external onlyOwner { 
-        paused = _state;
+        paused = _state);
+        emit SetPausedEvent(_state);
     }
 
     function _mintLoop(address _receiver, uint256 _mintAmount) internal { 
