@@ -1316,20 +1316,20 @@ contract PANDA_SERIES_III is ERC721, Ownable, ReentrancyGuard {
     }
     
     event SetUriMerklerootEvent(bytes32 _merkleroot);
-    function setMerkleroot(bytes32 _merkleroot);external onlyOwner { 
+    function setMerkleroot(bytes32 _merkleroot) external onlyOwner { 
         merkleRoot = _merkleroot;
         emit SetUriMerklerootEvent(_merkleroot);
     }
 
-    event SetUriPrifix(string memory _uriPrefix);
+    event SetUriPrefixEvent(string _uriPrefix);
     function setUriPrefix(string memory _uriPrefix) external onlyOwner { 
         uriPrefix = _uriPrefix;
-        emit SetUriPrifix(_uriPrefix);
+        emit SetUriPrefixEvent(_uriPrefix);
     }
     
     event SetPausedEvent(bool _state);
     function setPaused(bool _state) external onlyOwner { 
-        paused = _state);
+        paused = _state;
         emit SetPausedEvent(_state);
     }
 
